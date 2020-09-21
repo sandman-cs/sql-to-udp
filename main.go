@@ -21,7 +21,7 @@ import (
 func connectToDB(server string, usr string, pwd string, database string) *sql.DB {
 	for {
 		log.Printf("Attempting to connect to DB...")
-		sqlString := "server="+server+";user id="+usr+"; password="+pwd+";database="+database
+		sqlString := "server=" + server + ";user id=" + usr + "; password=" + pwd + ";database=" + database
 		log.Println("sqlString: ", sqlString)
 		db, err := sql.Open("mssql", sqlString)
 		//db, err := sql.Open("mssql", "server="+server+";user id="+usr+"; password="+pwd+";database="+database)
@@ -66,6 +66,10 @@ func workLoopWithSender(offset int, c dbSrv) {
 	//Connect to Database
 	db := connectToDB(c.DbServer, c.DbUsr, c.DbPwd, c.DbDatabase)
 
+	//Create Send Channel
+	sender := make(chan string, 1)
+	sendUDPMessage(c.SysLogSrv, c.SysLogPort, sender)
+
 	for {
 		sendMessage("Checking for work...")
 		alive++
@@ -97,6 +101,7 @@ func workLoopWithSender(offset int, c dbSrv) {
 					}
 					newData, _ := json.Marshal(m)
 					fmt.Printf("%s\n", newData)
+					sender <- fmt.Sprintf("%s\n", newData)
 				}
 			}
 		}

@@ -27,30 +27,6 @@ func init() {
 
 }
 
-//InitSysLog inititialize the stuff...
-func InitSysLog(iSysLogSrv string, iSysLogPort string, iAppName string, iAppVersion string, iLocalEcho bool, iServerName string) {
-
-	if iSysLogSrv != "" {
-		sysLogSrv = iSysLogSrv
-	}
-	if iSysLogPort != "" {
-		sysLogPort = iSysLogPort
-	}
-	if iAppName != "" {
-		appName = iAppName
-	}
-	if iAppVersion != "" {
-		appVersion = iAppVersion
-	}
-	if iServerName != "" {
-		serverName = iServerName
-	}
-	if iLocalEcho {
-		localEcho = true
-	}
-
-}
-
 //SyslogSend - Send message to Syslog Dest
 func SyslogSend(msg string) {
 
