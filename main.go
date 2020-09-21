@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"strconv"
@@ -16,29 +15,27 @@ import (
 	_ "github.com/denisenkom/go-mssqldb"
 )
 
-var (
-	db *sql.DB
-)
-
 // Try to connect to the DB server as
 // long as it takes to establish a connection
 //
-func connectToDB() {
+func connectToDB(server string, usr string, pwd string, database string) *sql.DB {
 	for {
-		var err error
 		log.Printf("Attempting to connect to DB...")
-		db, err = sql.Open("mssql", "server="+conf.DbServer+";user id="+conf.DbUsr+"; password="+conf.DbPwd+";database="+conf.DbDatabase)
+		sqlString := "server="+server+";user id="+usr+"; password="+pwd+";database="+database
+		log.Println("sqlString: ", sqlString)
+		db, err := sql.Open("mssql", sqlString)
+		//db, err := sql.Open("mssql", "server="+server+";user id="+usr+"; password="+pwd+";database="+database)
 		if err == nil {
 			err = db.Ping()
 			if err != nil {
-				checkError(err, "connectToDB Error")
+				log.Println("db Ping error: ", err)
 			} else {
 				log.Printf("DB Connected...")
-				return
+				return db
 			}
 		}
 
-		log.Println(err)
+		log.Println("sql.Open error: ", err)
 		log.Printf("Trying to reconnect to DB Server")
 		time.Sleep(1000 * time.Millisecond)
 	}
@@ -55,61 +52,25 @@ func main() {
 		sig := <-sigs
 		sendMessage("Exiting Program, recieved: ")
 		sendMessage(fmt.Sprintln(sig))
-		if db != nil {
-			err := db.Close()
-			checkError(err, "Closing DB Error")
-		}
+		closeReceived = true
+		//Put logic in here for wait groups for clean close
 		done <- true
 	}()
-
-	//Establish DB Connection
-
-	connectToDB()
-
-	go func() {
-		workLoop()
-		log.Println("Application Error", "Work loop exited, restarting in 5 seconds...", "critical")
-		time.Sleep(5 * time.Second)
-	}()
-
-	//slackSendMessageTest("Hello from Test")
 
 	sendMessage("Press Ctrl+C to exit: ")
 	<-done
 }
 
-func syslogSend(msg string) {
+func workLoopWithSender(offset int, c dbSrv) {
 
-	ServerAddr, err := net.ResolveUDPAddr("udp", conf.SysLogSrv+":"+conf.SysLogPort)
-	checkError(err, "Setting Syslog Send DST error")
-	if err == nil {
-
-		LocalAddr, err := net.ResolveUDPAddr("udp", ":0")
-		checkError(err, "LocalAddr error in syslogSend")
-
-		Conn, err := net.DialUDP("udp", LocalAddr, ServerAddr)
-		checkError(err, "Dial error in syslogSend")
-
-		defer Conn.Close()
-		buf := []byte(msg)
-		if _, err := Conn.Write(buf); err != nil {
-			//fmt.Println(msg, err)
-			checkError(err, "Connection write error in syslogSend")
-		}
-	}
-}
-
-func workLoop() {
+	//Connect to Database
+	db := connectToDB(c.DbServer, c.DbUsr, c.DbPwd, c.DbDatabase)
 
 	for {
 		sendMessage("Checking for work...")
 		alive++
 
-		if db == nil {
-			connectToDB()
-		}
-
-		rows, err := db.Query("execute get_failed_logins_into_splunk '2020-09-13 00:00:00.000'")
+		rows, err := db.Query("execute get_failed_logins_into_splunk")
 		if err != nil {
 			log.Println(err)
 		} else {
@@ -146,7 +107,7 @@ func workLoop() {
 		}
 		rows.Close()
 
-		time.Sleep(conf.WorkDelay * time.Second)
+		time.Sleep(c.WorkDelay * time.Second)
 	}
 
 }

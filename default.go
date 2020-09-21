@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"net"
 )
 
 //checkError function
@@ -17,25 +16,6 @@ func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
 		panic(fmt.Sprintf("%s: %s", msg, err))
-	}
-}
-
-func sendUDPMessage(msg string) {
-	ServerAddr, err := net.ResolveUDPAddr("udp", conf.SysLogSrv+":"+conf.SysLogPort)
-	checkError(err, "Error resolving syslog server address...")
-	if err == nil {
-
-		LocalAddr, err := net.ResolveUDPAddr("udp", ":0")
-		checkError(err, "Error creating socket to send UDP message...")
-
-		Conn, err := net.DialUDP("udp", LocalAddr, ServerAddr)
-		checkError(err, "Error connecting too syslog destination...")
-
-		defer Conn.Close()
-		buf := []byte(msg)
-		if _, err := Conn.Write(buf); err != nil {
-			checkError(err, "Error sending data too syslog destination...")
-		}
 	}
 }
 
