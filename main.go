@@ -80,7 +80,7 @@ func workLoopWithSender(offset int, c dbSrv) {
 		sendMessage("Checking for work...")
 		alive++
 
-		rows, err := db.Query("execute get_failed_logins_into_splunk")
+		rows, err := db.Query(c.DbStatment)
 		if err != nil {
 			log.Println(err)
 		} else {

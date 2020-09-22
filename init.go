@@ -49,6 +49,9 @@ func init() {
 			if len(element.DbServer) == 0 {
 				element.DbServer = conf.DefaultSrvList.DbServer
 			}
+			if len(element.DbStatment) == 0 {
+				element.DbStatment = conf.DefaultSrvList.DbStatment
+			}
 			if len(element.DbUsr) == 0 {
 				element.DbUsr = conf.DefaultSrvList.DbUsr
 			}

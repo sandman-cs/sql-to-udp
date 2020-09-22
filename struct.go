@@ -20,6 +20,7 @@ type dbSrv struct {
 	DbUsr      string
 	DbPwd      string
 	DbDatabase string
+	DbStatment string
 	SysLogSrv  string
 	SysLogPort string
 	WorkDelay  time.Duration

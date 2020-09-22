@@ -15,6 +15,7 @@ DefaultSrvList is filled in as default for any blank values in the DbSrvList arr
 		"DbDatabase": "dba",
 		"DbUsr": "user",
 		"DbPwd": "password",
+		"DbStatment": "execute get_failed_logins_into_splunk",
 		"SysLogSrv": "localhost",
 		"SysLogPort": "8514",
 		"WorkDelay": 60
