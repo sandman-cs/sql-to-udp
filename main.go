@@ -96,6 +96,7 @@ func workLoopWithSender(offset int, c dbSrv) {
 				err = rows.Scan(vals...)
 				if err == nil {
 					m := make(map[string]interface{})
+					m["servername"] = c.DbServer
 					for y, value := range vals {
 						//tmpString := fmt.Sprintf("%s", value)
 						tmpString2 := trimFirstRune(fmt.Sprintf("%s", value))
