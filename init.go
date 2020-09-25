@@ -26,7 +26,7 @@ func init() {
 	conf.DefaultSrvList.SysLogPort = "514"
 	conf.DefaultSrvList.WorkDelay = 60
 	conf.ServerName, _ = os.Hostname()
-	conf.AppName = "Go - Sql to UDP"
+	conf.AppName = "sql-to-udp"
 	conf.AppVer = " 1.0"
 
 	//Load Configuration Data
