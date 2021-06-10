@@ -65,6 +65,7 @@ func workLoopWithSender(offset int, c dbSrv) {
 
 	//Connect to Database
 	db := connectToDB(c.DbServer, c.DbUsr, c.DbPwd, c.DbDatabase)
+	defer db.Close()
 
 	//Create Send Channel
 	sender := make(chan string, 1)
@@ -84,9 +85,6 @@ func workLoopWithSender(offset int, c dbSrv) {
 		if err != nil {
 			log.Println(err)
 		} else {
-			defer rows.Close()
-
-			//Test Code
 			cols, _ := rows.Columns() // Remember to check err afterwards
 			vals := make([]interface{}, len(cols))
 			for i := range cols {
@@ -130,6 +128,7 @@ func trimFirstRune(s string) string {
 	return s[i:]
 }
 
+/*
 func isNum(s string) (bool, int) {
 	if number, err := strconv.Atoi(s); err == nil {
 		return true, number
@@ -137,3 +136,4 @@ func isNum(s string) (bool, int) {
 	return false, 0
 
 }
+*/

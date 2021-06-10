@@ -43,10 +43,10 @@ func stringMsgToJSON(msg string, mType string) string {
 		"app":       conf.AppName,
 		"host":      conf.ServerName,
 		"ver":       conf.AppVer,
-		"timestamp": fmt.Sprintf(time.Now().String()),
+		"timestamp": fmt.Sprint(time.Now().String()),
 	}
 
 	bytes, _ := json.Marshal(szUserProperties)
-	return fmt.Sprintf(string(bytes))
+	return fmt.Sprint(string(bytes))
 
 }

@@ -12,7 +12,6 @@ var (
 	sysLogSrv  string
 	sysLogPort string
 	appName    string
-	appVersion string
 	serverName string
 	localEcho  bool
 )
@@ -22,7 +21,6 @@ func init() {
 	sysLogSrv = "splunk"
 	sysLogPort = "514"
 	appName = "unknown"
-	appVersion = "1.0"
 	serverName, _ = os.Hostname()
 
 }
