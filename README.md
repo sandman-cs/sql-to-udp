@@ -9,7 +9,7 @@ DefaultSrvList is filled in as default for any blank values in the DbSrvList arr
 ```
 {
 	"DbSrvList": [{
-		"DbServer": "serv100.peoplenetonline.com"
+		"DbServer": "mydbserver"
 	}],
 	"DefaultSrvList": {
 		"DbDatabase": "dba",
